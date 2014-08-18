@@ -1,22 +1,23 @@
 package org.saintandreas.vr;
 
-import static org.lwjgl.opengl.GL11.*;
+import static com.oculusvr.capi.OvrLibrary.ovrDistortionCaps.*;
+import static com.oculusvr.capi.OvrLibrary.ovrHmdType.*;
+import static com.oculusvr.capi.OvrLibrary.ovrRenderAPIType.*;
+import static com.oculusvr.capi.OvrLibrary.ovrTrackingCaps.*;
 
 import java.awt.Rectangle;
 
 import org.lwjgl.opengl.ContextAttribs;
+import org.lwjgl.opengl.Display;
 import org.saintandreas.gl.FrameBuffer;
 import org.saintandreas.gl.MatrixStack;
-import org.saintandreas.gl.OpenGL;
 import org.saintandreas.gl.app.LwjglApp;
-import org.saintandreas.gl.buffers.VertexArray;
 import org.saintandreas.math.Matrix4f;
 
 import com.oculusvr.capi.EyeRenderDesc;
 import com.oculusvr.capi.FovPort;
+import com.oculusvr.capi.HSWDisplayState;
 import com.oculusvr.capi.Hmd;
-import com.oculusvr.capi.HmdDesc;
-import com.oculusvr.capi.OvrLibrary;
 import com.oculusvr.capi.OvrVector2i;
 import com.oculusvr.capi.Posef;
 import com.oculusvr.capi.RenderAPIConfig;
@@ -24,23 +25,28 @@ import com.oculusvr.capi.Texture;
 import com.oculusvr.capi.TextureHeader;
 
 public abstract class RiftApp extends LwjglApp {
-  //  private static final OvrLibrary OVR = OvrLibrary.INSTANCE;
   protected final Hmd hmd;
-  private final HmdDesc hmdDesc;
-
-  private EyeRenderDesc eyeRenderDescs[] = (EyeRenderDesc[]) new EyeRenderDesc().toArray(2);
-  private Texture eyeTextures[] = (Texture[]) new Texture().toArray(2);
-  private FrameBuffer frameBuffers[] = new FrameBuffer[2];
+  private EyeRenderDesc eyeRenderDescs[] = null;
+  private final FovPort fovPorts[] =
+      (FovPort[])new FovPort().toArray(2);
+  private final Texture eyeTextures[] =
+      (Texture[])new Texture().toArray(2);
+  private final Posef[] poses = 
+      (Posef[])new Posef().toArray(2);
+  private final FrameBuffer frameBuffers[] =
+      new FrameBuffer[2];
+  private final Matrix4f projections[] =
+      new Matrix4f[2];
   private int frameCount = -1;
   private int currentEye;
-  private Matrix4f projections[] = new Matrix4f[2];
 
-  protected float ipd = OvrLibrary.OVR_DEFAULT_IPD;
+
 
   private static Hmd openFirstHmd() {
     Hmd hmd = Hmd.create(0);
     if (null == hmd) {
-      hmd = Hmd.createDebug(OvrLibrary.ovrHmdType.ovrHmd_DK1);
+      hmd = Hmd.createDebug(ovrHmd_DK1);
+      hmd.WindowsPos.y = -1080;
     }
     return hmd;
   }
@@ -49,116 +55,143 @@ public abstract class RiftApp extends LwjglApp {
     super();
 
     Hmd.initialize();
+    
+    try {
+      Thread.sleep(400);
+    } catch (InterruptedException e) {
+      throw new IllegalStateException(e);
+    }
 
     hmd = openFirstHmd();
     if (null == hmd) {
-      throw new IllegalStateException("Unable to initialize HMD");
+      throw new IllegalStateException(
+          "Unable to initialize HMD");
     }
 
-    hmdDesc = hmd.getDesc();
-    ipd = hmd.getFloat(OvrLibrary.OVR_KEY_IPD, ipd);
-    if (0 == hmd.startSensor(0, 0)) {
-      throw new IllegalStateException("Unable to start the sensor");
+    if (0 == hmd.configureTracking(
+        ovrTrackingCap_Orientation | 
+        ovrTrackingCap_Position, 0)) {
+      throw new IllegalStateException(
+          "Unable to start the sensor");
+    }
+
+    for (int eye = 0; eye < 2; ++eye) {
+      fovPorts[eye] = hmd.DefaultEyeFov[eye];
+      projections[eye] = RiftUtils.toMatrix4f(
+          Hmd.getPerspectiveProjection(
+              fovPorts[eye], 0.1f, 1000000f, true));
+
+      Texture texture = eyeTextures[eye];
+      TextureHeader header = texture.Header;
+      header.API = ovrRenderAPI_OpenGL;
+      header.TextureSize = hmd.getFovTextureSize(
+          eye, fovPorts[eye], 1.0f);
+      header.RenderViewport.Size = header.TextureSize; 
+      header.RenderViewport.Pos = new OvrVector2i(0, 0);
     }
   }
 
   @Override
   protected void onDestroy() {
     hmd.destroy();
+    Hmd.shutdown();
   }
 
   @Override
   protected void setupContext() {
-    pixelFormat = pixelFormat.withSamples(16).withDepthBits(16);
-    contextAttributes = new ContextAttribs(4, 4)
-    .withForwardCompatible(true)
-    .withProfileCore(true).withDebug(true);
+    // Bug in LWJGL on OSX returns a 2.1 context if you ask for 3.3, but returns 4.1 if you ask for 3.2
+    String osName = System.getProperty("os.name");
+    if (osName.startsWith("Mac") || osName.startsWith("Darwin")) {
+      contextAttributes = new ContextAttribs(3, 2);
+    } else {
+      contextAttributes = new ContextAttribs(4, 4);
+    }
+    contextAttributes = contextAttributes
+        .withProfileCore(true)
+        .withDebug(true);
   }
 
   @Override
-  protected void setupDisplay() {
-    System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
+  protected final void setupDisplay() {
+    System.setProperty(
+        "org.lwjgl.opengl.Window.undecorated", "true");
+
     Rectangle targetRect = new Rectangle(
-        hmdDesc.WindowsPos.x, hmdDesc.WindowsPos.y, 
-        hmdDesc.Resolution.w, hmdDesc.Resolution.h);
+        hmd.WindowsPos.x, hmd.WindowsPos.y, 
+        hmd.Resolution.w, hmd.Resolution.h);
     setupDisplay(targetRect);
   }
 
   @Override
   protected void initGl() {
     super.initGl();
-    OpenGL.checkError();
-    
-    FovPort fovPorts[] = (FovPort[])new FovPort().toArray(2);  
     for (int eye = 0; eye < 2; ++eye) {
-      {
-        // JNA weirdness 1
-        fovPorts[eye] = hmdDesc.DefaultEyeFov[eye];
-        projections[eye] = RiftUtils.toMatrix4f(
-            Hmd.getPerspectiveProjection(
-                fovPorts[eye], 0.1f, 1000000f, true));
-
-        TextureHeader eth = eyeTextures[eye].Header;
-        eth.TextureSize = hmd.getFovTextureSize(eye, fovPorts[eye], 1.0f);
-        eth.RenderViewport.Size = eth.TextureSize; 
-        eth.RenderViewport.Pos = new OvrVector2i(0, 0);
-        eth.API = OvrLibrary.ovrRenderAPIType.ovrRenderAPI_OpenGL;
-
-        frameBuffers[eye] = new FrameBuffer(eth.TextureSize.w, eth.TextureSize.h);
-        eyeTextures[eye].TextureId = frameBuffers[eye].getTexture().id;
-      }
+      TextureHeader eth = eyeTextures[eye].Header;
+      frameBuffers[eye] = new FrameBuffer(
+          eth.TextureSize.w, eth.TextureSize.h);
+      eyeTextures[eye].TextureId = frameBuffers[eye].getTexture().id;
     }
 
-    
     RenderAPIConfig rc = new RenderAPIConfig();
-    rc.Header.API = OvrLibrary.ovrRenderAPIType.ovrRenderAPI_OpenGL;
-    rc.Header.RTSize = hmdDesc.Resolution;
+    rc.Header.RTSize = hmd.Resolution;
     rc.Header.Multisample = 1;
-    for (int i = 0; i < rc.PlatformData.length; ++i) {
-      rc.PlatformData[i] = 0;
-    }
-    rc.write();
-    int distortionCaps = 0 
-        | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Chromatic 
-        | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_TimeWarp 
-        | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_Vignette
-        | OvrLibrary.ovrDistortionCaps.ovrDistortionCap_NoSwapBuffers
-        ;
 
-    VertexArray.unbind();
+    int distortionCaps = 
+      ovrDistortionCap_Chromatic |
+      ovrDistortionCap_TimeWarp |
+      ovrDistortionCap_Vignette;
 
     eyeRenderDescs = hmd.configureRendering(
         rc, distortionCaps, fovPorts);
-    // Glew init sometimes causes a GL erorr, so we clear it out here
-    glGetError();
   }
 
+  @Override
+  protected boolean onKeyboardEvent() {
+    HSWDisplayState hsw = hmd.getHSWDisplayState();
+    if (0 != hsw.Displayed) {
+      hmd.dismissHSWDisplay();
+    }
+    return super.onKeyboardEvent();
+  }
 
   @Override
   public final void drawFrame() {
-    glViewport(0, 0, width, height);
-    glClearColor(1, 1, 1, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     hmd.beginFrame(++frameCount);
     for (int i = 0; i < 2; ++i) {
-      int eye = currentEye = hmdDesc.EyeRenderOrder[i];
-      MatrixStack.PROJECTION.set(projections[eye]);
-      Posef pose = hmd.beginEyeRender(eye);
+      currentEye = hmd.EyeRenderOrder[i];
+      MatrixStack.PROJECTION.set(projections[currentEye]);
+      // This doesn't work as it breaks the contiguous nature of the array
+      Posef pose = hmd.getEyePose(currentEye);
+      // FIXME there has to be a better way to do this
+      poses[currentEye].Orientation = pose.Orientation;
+      poses[currentEye].Position = pose.Position;
+
       MatrixStack mv = MatrixStack.MODELVIEW;
       mv.push();
       {
-        //mv.preTranslate(RiftUtils.toVector3f(pose.Position).mult(-1));
-        mv.preRotate(RiftUtils.toQuaternion(pose.Orientation).inverse());
-        mv.preTranslate(RiftUtils.toVector3f(eyeRenderDescs[eye].ViewAdjust));
-        frameBuffers[eye].activate();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        mv.preTranslate(
+          RiftUtils.toVector3f(
+            poses[currentEye].Position).mult(-1));
+        mv.preRotate(
+          RiftUtils.toQuaternion(
+            poses[currentEye].Orientation).inverse());
+        mv.preTranslate(
+          RiftUtils.toVector3f(
+            eyeRenderDescs[currentEye].ViewAdjust));
+        frameBuffers[currentEye].activate();
         renderScene();
-        frameBuffers[eye].deactivate();
+        frameBuffers[currentEye].deactivate();
       }
       mv.pop();
-      hmd.endEyeRender(eye, pose, eyeTextures[eye]);
     }
-    hmd.endFrame();
+    currentEye = -1;
+    hmd.endFrame(poses, eyeTextures);
+  }
+
+  @Override
+  protected void finishFrame() {
+    Display.processMessages();
+//    Display.update();
   }
 
   protected abstract void renderScene();

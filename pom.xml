@@ -44,7 +44,12 @@
     <dependency>
       <groupId>org.saintandreas</groupId>
       <artifactId>jovr</artifactId>
-      <version>[0.3.2.0, 0.3.3)</version>
+      <version>0.4.1.2-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+        <groupId>net.java.dev.jna</groupId>
+        <artifactId>jna</artifactId>
+        <version>[3, 4)</version>
     </dependency>
     <dependency>
       <groupId>uk.co.caprica</groupId>
@@ -55,22 +60,25 @@
       <artifactId>httpclient</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpasyncclient</artifactId>
-      <version>4.0.1</version>
-    </dependency>
-    <dependency>
       <groupId>org.jscience</groupId>
       <artifactId>jscience</artifactId>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
+      <version>2.4.1.3</version>
+    </dependency>
+    <!-- 
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpasyncclient</artifactId>
+      <version>4.0.1</version>
     </dependency>
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
     </dependency>
+     -->
   </dependencies>
   <build>
     <plugins>

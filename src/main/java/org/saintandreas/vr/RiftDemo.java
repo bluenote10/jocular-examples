@@ -17,11 +17,11 @@ public class RiftDemo extends RiftApp {
 
   Program program;
   IndexedGeometry geometry;
+  float ipd = OvrLibrary.OVR_DEFAULT_IPD;
 
   @Override
   protected void initGl() {
     super.initGl();
-
     MatrixStack.MODELVIEW.lookat(Vector3f.UNIT_X.scale(ipd * 5), // eye position
         Vector3f.ZERO, // origin of the scene
         Vector3f.UNIT_Y); // up direction
