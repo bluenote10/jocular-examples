@@ -10,14 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.saintandreas.ExampleResource;
-import org.saintandreas.Programs;
-import org.saintandreas.gl.buffers.VertexArray;
-import org.saintandreas.gl.shaders.Attribute;
 import org.saintandreas.gl.shaders.Program;
+import org.saintandreas.gl.shaders.StandardAttribute;
 import org.saintandreas.gl.textures.Texture;
 import org.saintandreas.math.Vector4f;
 import org.saintandreas.resources.BasicResource;
 import org.saintandreas.resources.Resource;
+import org.saintandreas.transforms.MatrixStack;
 
 import com.oculusvr.capi.Hmd;
 
@@ -47,7 +46,7 @@ public class SceneHelpers {
       indices.add((short) 2); // UL
       indices.add((short) 3); // UR
       IndexedGeometry.Builder builder = new IndexedGeometry.Builder(indices, vertices);
-      builder.withDrawType(GL_TRIANGLE_STRIP).withAttribute(Attribute.POSITION).withAttribute(Attribute.TEX);
+      builder.withDrawType(GL_TRIANGLE_STRIP).withAttribute(StandardAttribute.POSITION).withAttribute(StandardAttribute.TEX);
       floorGeometry = builder.build();
     }
     if (null == floorTexture) {
@@ -62,7 +61,7 @@ public class SceneHelpers {
       glGenerateMipmap(GL_TEXTURE_2D);
       floorTexture.unbind();
     }
-    Program floorProgram = Programs.getProgram(
+    Program floorProgram = OpenGL.getProgram(
         SHADERS_TEXTURED_VS, 
         new BasicResource("shaders/Floor.fs"));
     floorProgram.use();
@@ -73,14 +72,14 @@ public class SceneHelpers {
     floorGeometry.draw();
     Texture.unbind(GL_TEXTURE_2D);
     Program.clear();
-    VertexArray.unbind();
+    floorGeometry.unbind();
   }
   
   public static void renderColorCube() {
     if (null == cubeGeometry) {
       cubeGeometry = OpenGL.makeColorCube();
     }
-    Program cubeProgram = Programs.getProgram(
+    Program cubeProgram = OpenGL.getProgram(
         ExampleResource.SHADERS_COLORED_VS, 
         ExampleResource.SHADERS_COLORED_FS);
     glPrimitiveRestartIndex(Short.MAX_VALUE);
@@ -88,10 +87,10 @@ public class SceneHelpers {
 
     cubeProgram.use();
     OpenGL.bindAll(cubeProgram);
-    cubeGeometry.bindVertexArray();
+    cubeGeometry.bind();
     cubeGeometry.draw();
     Program.clear();
-    VertexArray.unbind();
+    cubeGeometry.unbind();
   }
 
   // @formatter:off
@@ -110,12 +109,12 @@ public class SceneHelpers {
       cubeGeometry = OpenGL.makeColorCube();
     }
 
-    Program skyboxProgram = Programs.getProgram(
+    Program skyboxProgram = OpenGL.getProgram(
         SHADERS_CUBEMAP_VS, 
         SHADERS_CUBEMAP_FS);
 
     if (null == skyboxTexture) {
-      skyboxTexture = OpenGL.getCubemapTextures(SKYBOX);
+      skyboxTexture = OpenGL.getCubemapTexture(SKYBOX);
     }
 
     MatrixStack mv = MatrixStack.MODELVIEW;
@@ -139,7 +138,7 @@ public class SceneHelpers {
     if (null == cubeGeometry) {
       cubeGeometry = OpenGL.makeColorCube();
     }
-    Program proceduralSkyboxProgram = Programs.getProgram(
+    Program proceduralSkyboxProgram = OpenGL.getProgram(
         SHADERS_CUBEMAP_VS, 
         new BasicResource("shaders/Floor.fs"));
 

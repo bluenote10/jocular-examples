@@ -16,18 +16,16 @@ import javax.imageio.ImageIO;
 
 import org.lwjgl.opengl.GL11;
 import org.saintandreas.gl.IndexedGeometry;
-import org.saintandreas.gl.MatrixStack;
-import org.saintandreas.gl.buffers.VertexArray;
-import org.saintandreas.gl.shaders.Attribute;
 import org.saintandreas.gl.shaders.Program;
+import org.saintandreas.gl.shaders.StandardAttribute;
 import org.saintandreas.gl.textures.Texture;
 import org.saintandreas.math.Vector2f;
 import org.saintandreas.math.Vector4f;
-import org.saintandreas.spritz.TimedWord;
+import org.saintandreas.transforms.MatrixStack;
 
 public class Font {
-  private static final float DTP_TO_METERS = 0.003528f;
-  private static final float METERS_TO_DTP = 1.0f / DTP_TO_METERS;
+  public static final float DTP_TO_METERS = 0.003528f;
+  public static final float METERS_TO_DTP = 1.0f / DTP_TO_METERS;
 
   // stores the font metrics for a single character
   public class Metrics {
@@ -179,8 +177,8 @@ public class Font {
 
     IndexedGeometry.Builder builder = new IndexedGeometry.Builder(indexData,
         vertexData);
-    builder.withAttribute(Attribute.POSITION);
-    builder.withAttribute(Attribute.TEX);
+    builder.withAttribute(StandardAttribute.POSITION);
+    builder.withAttribute(StandardAttribute.TEX);
     mGeometry = builder.build();
   }
 
@@ -235,48 +233,9 @@ public class Font {
     return m.d;
   }
 
+  @SuppressWarnings("unused")
   private float renderCharacter(Character c, float offset) {
     return renderCharacter(c, offset, false);
-  }
-
-  public void renderSpritz(TimedWord currentWord, float fontSize) {
-    if (currentWord.word.isEmpty()) {
-      return;
-    }
-    float scale = DTP_TO_METERS * fontSize / mFontSize;
-    if (textProgram == null) {
-      textProgram = new Program(ExampleResource.SHADERS_TEXT_VS,
-          ExampleResource.SHADERS_TEXT_FS);
-      textProgram.link();
-    }
-    textProgram.use();
-    textProgram.setUniform("Font", 0);
-    MatrixStack.PROJECTION.bind(textProgram);
-
-    mTexture.bind();
-    mGeometry.bindVertexArray();
-
-    MatrixStack mv = MatrixStack.MODELVIEW;
-    mv.withPush(() -> {
-      mv.translate(new Vector2f(-0.30f, scale * -(mAscent / 2.0f)));
-      mv.scale(scale);
-      textProgram.setUniform("Color", new Vector4f(0.8f, 0, 0.01f, 1));
-
-      float advance = 0;
-      advance += renderCharacter(currentWord.word.charAt(currentWord.orp),
-          advance);
-      textProgram.setUniform("Color", new Vector4f(1));
-      for (int i = currentWord.orp + 1; i < currentWord.word.length(); ++i) {
-        advance += renderCharacter(currentWord.word.charAt(i), advance);
-      }
-      advance = 0;
-      for (int i = currentWord.orp - 1; i >= 0; --i) {
-        advance -= renderCharacter(currentWord.word.charAt(i), advance, true);
-      }
-    });
-    VertexArray.unbind();
-    Texture.unbind(GL11.GL_TEXTURE_2D);
-    Program.clear();
   }
 
 }

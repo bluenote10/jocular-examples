@@ -1,0 +1,91 @@
+<!-- This file contains <public> resource definitions for all
+     resources that were generated from the source data. -->
+
+<resources>
+
+  <!-- PRIVATE SECTION.  These resources have not been declared public.
+       You can make them public my moving these lines into a file in res/values. -->
+
+  <!-- Declared at res\drawable\ic_chat.png:0 -->
+  <public type="drawable" name="ic_chat" id="0x7f020000" />
+  <!-- Declared at res\drawable\ic_disk.png:0 -->
+  <public type="drawable" name="ic_disk" id="0x7f020001" />
+  <!-- Declared at res\drawable\ic_error.png:0 -->
+  <public type="drawable" name="ic_error" id="0x7f020002" />
+  <!-- Declared at res\drawable\ic_eye.png:0 -->
+  <public type="drawable" name="ic_eye" id="0x7f020003" />
+  <!-- Declared at res\drawable\ic_fire.png:0 -->
+  <public type="drawable" name="ic_fire" id="0x7f020004" />
+  <!-- Declared at res\drawable\ic_folder.png:0 -->
+  <public type="drawable" name="ic_folder" id="0x7f020005" />
+  <!-- Declared at res\drawable\ic_gear.png:0 -->
+  <public type="drawable" name="ic_gear" id="0x7f020006" />
+  <!-- Declared at res\drawable\ic_gears.png:0 -->
+  <public type="drawable" name="ic_gears" id="0x7f020007" />
+  <!-- Declared at res\drawable\ic_globe.png:0 -->
+  <public type="drawable" name="ic_globe" id="0x7f020008" />
+  <!-- Declared at res\drawable\ic_headphones.png:0 -->
+  <public type="drawable" name="ic_headphones" id="0x7f020009" />
+  <!-- Declared at res\drawable\ic_heart.png:0 -->
+  <public type="drawable" name="ic_heart" id="0x7f02000a" />
+  <!-- Declared at res\drawable\ic_home.png:0 -->
+  <public type="drawable" name="ic_home" id="0x7f02000b" />
+  <!-- Declared at res\drawable\ic_hourglass.png:0 -->
+  <public type="drawable" name="ic_hourglass" id="0x7f02000c" />
+  <!-- Declared at res\drawable\ic_like.png:0 -->
+  <public type="drawable" name="ic_like" id="0x7f02000d" />
+  <!-- Declared at res\drawable\ic_login.png:0 -->
+  <public type="drawable" name="ic_login" id="0x7f02000e" />
+  <!-- Declared at res\drawable\ic_media_backward.png:0 -->
+  <public type="drawable" name="ic_media_backward" id="0x7f02000f" />
+  <!-- Declared at res\drawable\ic_media_eject.png:0 -->
+  <public type="drawable" name="ic_media_eject" id="0x7f020010" />
+  <!-- Declared at res\drawable\ic_media_fast_forward.png:0 -->
+  <public type="drawable" name="ic_media_fast_forward" id="0x7f020011" />
+  <!-- Declared at res\drawable\ic_media_fast_rewind.png:0 -->
+  <public type="drawable" name="ic_media_fast_rewind" id="0x7f020012" />
+  <!-- Declared at res\drawable\ic_media_forward.png:0 -->
+  <public type="drawable" name="ic_media_forward" id="0x7f020013" />
+  <!-- Declared at res\drawable\ic_media_next.png:0 -->
+  <public type="drawable" name="ic_media_next" id="0x7f020014" />
+  <!-- Declared at res\drawable\ic_media_pause.png:0 -->
+  <public type="drawable" name="ic_media_pause" id="0x7f020015" />
+  <!-- Declared at res\drawable\ic_media_play.png:0 -->
+  <public type="drawable" name="ic_media_play" id="0x7f020016" />
+  <!-- Declared at res\drawable\ic_media_plus.png:0 -->
+  <public type="drawable" name="ic_media_plus" id="0x7f020017" />
+  <!-- Declared at res\drawable\ic_ok.png:0 -->
+  <public type="drawable" name="ic_ok" id="0x7f020018" />
+  <!-- Declared at res\drawable\ic_plus.png:0 -->
+  <public type="drawable" name="ic_plus" id="0x7f020019" />
+  <!-- Declared at res\drawable\ic_print.png:0 -->
+  <public type="drawable" name="ic_print" id="0x7f02001a" />
+  <!-- Declared at res\drawable\ic_redo.png:0 -->
+  <public type="drawable" name="ic_redo" id="0x7f02001b" />
+  <!-- Declared at res\drawable\ic_star.png:0 -->
+  <public type="drawable" name="ic_star" id="0x7f02001c" />
+  <!-- Declared at res\drawable\ic_sync.png:0 -->
+  <public type="drawable" name="ic_sync" id="0x7f02001d" />
+  <!-- Declared at res\drawable\ic_text_document.png:0 -->
+  <public type="drawable" name="ic_text_document" id="0x7f02001e" />
+  <!-- Declared at res\drawable\ic_video.png:0 -->
+  <public type="drawable" name="ic_video" id="0x7f02001f" />
+  <!-- Declared at res\drawable\ic_volume_mute.png:0 -->
+  <public type="drawable" name="ic_volume_mute" id="0x7f020020" />
+
+  <!-- Declared at src\main\resources\android\values\strings.xml:3 -->
+  <public type="string" name="app_name" id="0x7f030000" />
+  <!-- Declared at src\main\resources\android\values\strings.xml:4 -->
+  <public type="string" name="new_game" id="0x7f030001" />
+  <!-- Declared at src\main\resources\android\values\strings.xml:5 -->
+  <public type="string" name="help" id="0x7f030002" />
+
+  <!-- Declared at res\menu\test.xml:0 -->
+  <public type="menu" name="test" id="0x7f040000" />
+
+  <!-- Declared at src\main\resources\android\menu\test.xml:3 -->
+  <public type="id" name="new_game" id="0x7f050000" />
+  <!-- Declared at src\main\resources\android\menu\test.xml:6 -->
+  <public type="id" name="help" id="0x7f050001" />
+
+</resources>

@@ -1,0 +1,105 @@
+<!-- This file contains <public> resource definitions for all
+     resources that were generated from the source data. -->
+
+<resources>
+
+  <!-- PRIVATE SECTION.  These resources have not been declared public.
+       You can make them public my moving these lines into a file in res/values. -->
+
+  <!-- Declared at res\drawable\ic_book.png:0 -->
+  <public type="drawable" name="ic_book" id="0x7f020000" />
+  <!-- Declared at res\drawable\ic_cart.png:0 -->
+  <public type="drawable" name="ic_cart" id="0x7f020001" />
+  <!-- Declared at res\drawable\ic_chat.png:0 -->
+  <public type="drawable" name="ic_chat" id="0x7f020002" />
+  <!-- Declared at res\drawable\ic_cloud_sync.png:0 -->
+  <public type="drawable" name="ic_cloud_sync" id="0x7f020003" />
+  <!-- Declared at res\drawable\ic_disk.png:0 -->
+  <public type="drawable" name="ic_disk" id="0x7f020004" />
+  <!-- Declared at res\drawable\ic_eye1.png:0 -->
+  <public type="drawable" name="ic_eye1" id="0x7f020005" />
+  <!-- Declared at res\drawable\ic_eye2.png:0 -->
+  <public type="drawable" name="ic_eye2" id="0x7f020006" />
+  <!-- Declared at res\drawable\ic_folder.png:0 -->
+  <public type="drawable" name="ic_folder" id="0x7f020007" />
+  <!-- Declared at res\drawable\ic_gear1.png:0 -->
+  <public type="drawable" name="ic_gear1" id="0x7f020008" />
+  <!-- Declared at res\drawable\ic_gear2.png:0 -->
+  <public type="drawable" name="ic_gear2" id="0x7f020009" />
+  <!-- Declared at res\drawable\ic_globe.png:0 -->
+  <public type="drawable" name="ic_globe" id="0x7f02000a" />
+  <!-- Declared at res\drawable\ic_group.png:0 -->
+  <public type="drawable" name="ic_group" id="0x7f02000b" />
+  <!-- Declared at res\drawable\ic_heart.png:0 -->
+  <public type="drawable" name="ic_heart" id="0x7f02000c" />
+  <!-- Declared at res\drawable\ic_heart2.png:0 -->
+  <public type="drawable" name="ic_heart2" id="0x7f02000d" />
+  <!-- Declared at res\drawable\ic_home.png:0 -->
+  <public type="drawable" name="ic_home" id="0x7f02000e" />
+  <!-- Declared at res\drawable\ic_inbox.png:0 -->
+  <public type="drawable" name="ic_inbox" id="0x7f02000f" />
+  <!-- Declared at res\drawable\ic_like.png:0 -->
+  <public type="drawable" name="ic_like" id="0x7f020010" />
+  <!-- Declared at res\drawable\ic_media_add.png:0 -->
+  <public type="drawable" name="ic_media_add" id="0x7f020011" />
+  <!-- Declared at res\drawable\ic_media_backward.png:0 -->
+  <public type="drawable" name="ic_media_backward" id="0x7f020012" />
+  <!-- Declared at res\drawable\ic_media_eject.png:0 -->
+  <public type="drawable" name="ic_media_eject" id="0x7f020013" />
+  <!-- Declared at res\drawable\ic_media_fast_forward.png:0 -->
+  <public type="drawable" name="ic_media_fast_forward" id="0x7f020014" />
+  <!-- Declared at res\drawable\ic_media_fast_rewind.png:0 -->
+  <public type="drawable" name="ic_media_fast_rewind" id="0x7f020015" />
+  <!-- Declared at res\drawable\ic_media_forward.png:0 -->
+  <public type="drawable" name="ic_media_forward" id="0x7f020016" />
+  <!-- Declared at res\drawable\ic_media_next.png:0 -->
+  <public type="drawable" name="ic_media_next" id="0x7f020017" />
+  <!-- Declared at res\drawable\ic_media_pause.png:0 -->
+  <public type="drawable" name="ic_media_pause" id="0x7f020018" />
+  <!-- Declared at res\drawable\ic_media_play.png:0 -->
+  <public type="drawable" name="ic_media_play" id="0x7f020019" />
+  <!-- Declared at res\drawable\ic_media_previous.png:0 -->
+  <public type="drawable" name="ic_media_previous" id="0x7f02001a" />
+  <!-- Declared at res\drawable\ic_media_redo.png:0 -->
+  <public type="drawable" name="ic_media_redo" id="0x7f02001b" />
+  <!-- Declared at res\drawable\ic_media_reverse_play.png:0 -->
+  <public type="drawable" name="ic_media_reverse_play" id="0x7f02001c" />
+  <!-- Declared at res\drawable\ic_media_sync.png:0 -->
+  <public type="drawable" name="ic_media_sync" id="0x7f02001d" />
+  <!-- Declared at res\drawable\ic_news.png:0 -->
+  <public type="drawable" name="ic_news" id="0x7f02001e" />
+  <!-- Declared at res\drawable\ic_nuclear.png:0 -->
+  <public type="drawable" name="ic_nuclear" id="0x7f02001f" />
+  <!-- Declared at res\drawable\ic_power.png:0 -->
+  <public type="drawable" name="ic_power" id="0x7f020020" />
+  <!-- Declared at res\drawable\ic_redo.png:0 -->
+  <public type="drawable" name="ic_redo" id="0x7f020021" />
+  <!-- Declared at res\drawable\ic_sliders.png:0 -->
+  <public type="drawable" name="ic_sliders" id="0x7f020022" />
+  <!-- Declared at res\drawable\ic_star.png:0 -->
+  <public type="drawable" name="ic_star" id="0x7f020023" />
+  <!-- Declared at res\drawable\ic_sync.png:0 -->
+  <public type="drawable" name="ic_sync" id="0x7f020024" />
+  <!-- Declared at res\drawable\ic_text_document.png:0 -->
+  <public type="drawable" name="ic_text_document" id="0x7f020025" />
+  <!-- Declared at res\drawable\ic_user.png:0 -->
+  <public type="drawable" name="ic_user" id="0x7f020026" />
+  <!-- Declared at res\drawable\ic_video.png:0 -->
+  <public type="drawable" name="ic_video" id="0x7f020027" />
+
+  <!-- Declared at res\values\strings.xml:3 -->
+  <public type="string" name="app_name" id="0x7f030000" />
+  <!-- Declared at res\values\strings.xml:4 -->
+  <public type="string" name="new_game" id="0x7f030001" />
+  <!-- Declared at res\values\strings.xml:5 -->
+  <public type="string" name="help" id="0x7f030002" />
+
+  <!-- Declared at res\menu\test.xml:0 -->
+  <public type="menu" name="test" id="0x7f040000" />
+
+  <!-- Declared at res\menu\test.xml:3 -->
+  <public type="id" name="new_game" id="0x7f050000" />
+  <!-- Declared at res\menu\test.xml:6 -->
+  <public type="id" name="help" id="0x7f050001" />
+
+</resources>

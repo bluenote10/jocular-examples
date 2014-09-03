@@ -70,14 +70,23 @@ vec3 noise31(float p)
 {
     return vec3(noise11(p), noise11(p + 18.952), noise11(p - 11.372)) * 2.0 - 1.0;
 }
+#define PI 3.14159
+#define HALF_PI (PI / 2.0)
 
 // something that looks a bit like godrays coming from the surface
 float sky(vec3 p)
 {
-    float a = atan(p.x, p.z);
+    float m = 1.0;
+    float a = atan(p.x, p.z) / 2.0;
+//    if (a > 0.0) {
+//      float h = atan(p.y, p.x) / (HALF_PI  1.4);
+//      if (h > 0.0) {
+//        m = 1.0 - h;
+//      }
+//    }
     float t = time * 0.1;
     float v = rand11(floor(a * 4.0 + t)) * 0.5 + rand11(floor(a * 8.0 - t)) * 0.25 + rand11(floor(a * 16.0 + t)) * 0.125;
-    return v;
+    return v * m;
 }
 
 vec3 voronoi(in vec2 x)
@@ -173,9 +182,9 @@ void main(void)
     //vec3 rd = normalize(uv.x * uu + uv.y * vv + 1.0 * ww);
     vec3 rd = normalize(texCoord);
     rd.y = - rd.y;
-    
+
     // shaking and movement
-    ro += noise31(-st) * shake * 0.015;
+//    ro += noise31(-st) * shake * 0.015;
     ro.x += time * 2.0;
     
     float inten = 0.0;

@@ -10,9 +10,9 @@ import java.awt.Rectangle;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.saintandreas.gl.FrameBuffer;
-import org.saintandreas.gl.MatrixStack;
 import org.saintandreas.gl.app.LwjglApp;
 import org.saintandreas.math.Matrix4f;
+import org.saintandreas.transforms.MatrixStack;
 
 import com.oculusvr.capi.EyeRenderDesc;
 import com.oculusvr.capi.FovPort;
@@ -55,7 +55,7 @@ public abstract class RiftApp extends LwjglApp {
     super();
 
     Hmd.initialize();
-    
+
     try {
       Thread.sleep(400);
     } catch (InterruptedException e) {
@@ -142,7 +142,7 @@ public abstract class RiftApp extends LwjglApp {
       ovrDistortionCap_Vignette;
 
     eyeRenderDescs = hmd.configureRendering(
-        rc, distortionCaps, fovPorts);
+        rc, distortionCaps, hmd.DefaultEyeFov);
   }
 
   @Override
@@ -192,6 +192,27 @@ public abstract class RiftApp extends LwjglApp {
   protected void finishFrame() {
     Display.processMessages();
 //    Display.update();
+  }
+  
+  long lastFrameReport = 0;
+  int lastFrameCount = 0;
+  
+  @Override
+  protected void update() {
+    super.update();
+    long now = System.currentTimeMillis();
+    if (0 == lastFrameReport) {
+      lastFrameReport = now;
+      return;
+    }
+
+    if (now - lastFrameReport > 2000) {
+      float fps = frameCount - lastFrameCount;
+      fps /= now - lastFrameReport;
+      System.out.println(String.format("%3f", fps * 1000.0f));
+      lastFrameCount = frameCount;
+      lastFrameReport = now;
+    }
   }
 
   protected abstract void renderScene();

@@ -14,5 +14,4 @@ public class Statics {
   public static void forEach(int size, BiConsumer<Integer, Integer> b) {
     forEach(size, size, b);
   }
-
 }

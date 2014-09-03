@@ -49,7 +49,7 @@
     <dependency>
         <groupId>net.java.dev.jna</groupId>
         <artifactId>jna</artifactId>
-        <version>[3, 4)</version>
+        <version>[4, 5)</version>
     </dependency>
     <dependency>
       <groupId>uk.co.caprica</groupId>
@@ -78,7 +78,17 @@
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
     </dependency>
+    <dependency>
+      <groupId>de.matthiasmann</groupId>
+      <artifactId>twl</artifactId>
+      <version>1.0</version>
+    </dependency>
      -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.7.7</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
