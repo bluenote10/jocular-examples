@@ -10,9 +10,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.lwjgl.LWJGLException;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.SharedDrawable;
 import org.saintandreas.gl.FrameBuffer;
 import org.saintandreas.gl.MatrixStack;
 import org.saintandreas.gl.app.LwjglApp;
@@ -20,6 +23,10 @@ import org.saintandreas.math.Matrix4f;
 
 import com.oculusvr.capi.EyeRenderDesc;
 import com.oculusvr.capi.FovPort;
+import com.oculusvr.capi.GlConfig;
+import com.oculusvr.capi.GlConfigData;
+import com.oculusvr.capi.GlConfigData.ContextFunc;
+import com.oculusvr.capi.GlConfigData.SwapFunc;
 import com.oculusvr.capi.Hmd;
 import com.oculusvr.capi.OvrLibrary;
 import com.oculusvr.capi.OvrLibrary.ovrHmdCaps;
@@ -47,6 +54,36 @@ public abstract class RiftApp extends LwjglApp {
   private final Matrix4f projections[] =
       new Matrix4f[2];
   private int frameCount = -1;
+  private SharedDrawable shared;
+  
+  private GlConfigData.ContextFunc contextFunc = new ContextFunc() {
+    @Override
+    public void invoke(Pointer data, int enableDrawContext) {
+      try {
+        if (0 == enableDrawContext) {
+          shared.makeCurrent();
+        } else {
+          Display.makeCurrent();
+        }
+      } catch (LWJGLException e) {
+        throw new IllegalStateException(e);
+      }
+    }
+  };
+
+  private GlConfigData.SwapFunc swapFunc = new SwapFunc() {
+    @Override
+    public void invoke(Pointer data) {
+      try {
+        Display.makeCurrent();
+        Display.swapBuffers();
+        shared.makeCurrent();
+      } catch (LWJGLException e) {
+        throw new IllegalStateException(e);
+      }
+    }
+  };
+  
 
   private static Hmd openFirstHmd() {
     Hmd hmd = Hmd.create(0);
@@ -58,9 +95,8 @@ public abstract class RiftApp extends LwjglApp {
 
   public RiftApp() {
     super();
-
     Hmd.initialize();
-    
+
     try {
       Thread.sleep(400);
     } catch (InterruptedException e) {
@@ -102,6 +138,7 @@ public abstract class RiftApp extends LwjglApp {
     Hmd.shutdown();
   }
 
+  private static long display = 0;
   private static long getNativeWindow() {
     long window = -1;
     try {
@@ -127,6 +164,11 @@ public abstract class RiftApp extends LwjglApp {
       if (null != fieldName) {
         Field[] windowsDisplayFields = displayImpl.getClass().getDeclaredFields();
         for (Field f : windowsDisplayFields) {
+          if (f.getName().equals("display")) {
+            f.setAccessible(true);
+            display = (Long) f.get(displayImpl);
+            continue;
+          }
           if (f.getName().equals(fieldName)) {
             f.setAccessible(true);
             window = (Long) f.get(displayImpl);
@@ -160,9 +202,15 @@ public abstract class RiftApp extends LwjglApp {
     System.setProperty(
         "org.lwjgl.opengl.Window.undecorated", "true");
 
+    int w = hmd.Resolution.w, h = hmd.Resolution.h; 
+    if (LWJGLUtil.PLATFORM_LINUX == LWJGLUtil.getPlatform()) {
+      int t = w;
+      w = h;
+      h = t;
+    }
     Rectangle targetRect = new Rectangle(
         hmd.WindowsPos.x, hmd.WindowsPos.y, 
-        hmd.Resolution.w, hmd.Resolution.h);
+        w, h);
     setupDisplay(targetRect);
 
   }
@@ -170,6 +218,12 @@ public abstract class RiftApp extends LwjglApp {
   @Override
   protected void initGl() {
     super.initGl();
+    try {
+      shared = new SharedDrawable(Display.getDrawable());
+      shared.makeCurrent();
+    } catch (LWJGLException e) {
+      throw new IllegalStateException(e);
+    }
     for (int eye = 0; eye < 2; ++eye) {
       TextureHeader eth = eyeTextures[eye].Header;
       frameBuffers[eye] = new FrameBuffer(
@@ -177,19 +231,28 @@ public abstract class RiftApp extends LwjglApp {
       eyeTextures[eye].TextureId = frameBuffers[eye].getTexture().id;
     }
 
-    RenderAPIConfig rc = new RenderAPIConfig();
-    rc.Header.RTSize = hmd.Resolution;
-    rc.Header.Multisample = 1;
+    GlConfig rc = new GlConfig();
+    rc.OGL.Header.Multisample = 1;
+    int w = hmd.Resolution.w, h = hmd.Resolution.h; 
+    if (LWJGLUtil.PLATFORM_LINUX == LWJGLUtil.getPlatform()) {
+      int t = w;
+      w = h;
+      h = t;
+    }
+    rc.OGL.Header.RTSize.w = w;
+    rc.OGL.Header.RTSize.h = h;
+    rc.OGL.ContextData = Pointer.createConstant(0);
+    rc.OGL.ContextSwitch = this.contextFunc;
+    rc.OGL.SwapBuffers = this.swapFunc;
 
     int distortionCaps = 
       ovrDistortionCap_Chromatic |
       ovrDistortionCap_TimeWarp |
       ovrDistortionCap_Vignette;
 
-    for (int i = 0; i < rc.PlatformData.length; ++i) {
-      rc.PlatformData[i] = Pointer.createConstant(0);
+    if (LWJGLUtil.PLATFORM_LINUX == LWJGLUtil.getPlatform()) {
+      distortionCaps |= ovrDistortionCap_LinuxDevFullscreen;
     }
-
     eyeRenderDescs = hmd.configureRendering(
         rc, distortionCaps, fovPorts);
 
@@ -212,6 +275,8 @@ public abstract class RiftApp extends LwjglApp {
   public final void drawFrame() {
     ++frameCount;
     hmd.beginFrame(frameCount);
+    GL11.glClearColor(1,0 ,0 ,  1);
+    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
     Posef eyePoses[] = hmd.getEyePoses(frameCount, eyeOffsets);
     for (int i = 0; i < 2; ++i) {
       int eye = hmd.EyeRenderOrder[i];
