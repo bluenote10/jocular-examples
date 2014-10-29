@@ -138,7 +138,6 @@ public abstract class RiftApp extends LwjglApp {
     Hmd.shutdown();
   }
 
-  private static long display = 0;
   private static long getNativeWindow() {
     long window = -1;
     try {
@@ -154,9 +153,6 @@ public abstract class RiftApp extends LwjglApp {
       
       String fieldName = null;
       switch (LWJGLUtil.getPlatform()) {
-      case LWJGLUtil.PLATFORM_LINUX:
-        fieldName = "current_window";
-        break;
       case LWJGLUtil.PLATFORM_WINDOWS:
         fieldName = "hwnd";
         break;
@@ -164,11 +160,6 @@ public abstract class RiftApp extends LwjglApp {
       if (null != fieldName) {
         Field[] windowsDisplayFields = displayImpl.getClass().getDeclaredFields();
         for (Field f : windowsDisplayFields) {
-          if (f.getName().equals("display")) {
-            f.setAccessible(true);
-            display = (Long) f.get(displayImpl);
-            continue;
-          }
           if (f.getName().equals(fieldName)) {
             f.setAccessible(true);
             window = (Long) f.get(displayImpl);
