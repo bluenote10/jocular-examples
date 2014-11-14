@@ -1,0 +1,8 @@
+*.class
+*.log
+
+target/
+project/target/
+
+.classpath
+.cache

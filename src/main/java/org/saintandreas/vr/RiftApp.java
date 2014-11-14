@@ -246,7 +246,7 @@ public abstract class RiftApp extends LwjglApp {
     // buffer swapping.  We want only the input processing
     // so we have to call processMessages.
     Display.processMessages();
-//    Display.update();
+    // Display.update();
   }
 
   protected abstract void renderScene();
