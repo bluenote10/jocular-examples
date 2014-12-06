@@ -17,7 +17,7 @@ libraryDependencies += "org.saintandreas" % "math" % "1.0.4"
 
 libraryDependencies += "org.saintandreas" % "oria-resources" % "1.0.3"
 
-libraryDependencies += "org.saintandreas" % "jovr" % "0.4.3.0"
+libraryDependencies += "org.saintandreas" % "jovr" % "0.4.4.0"
 
 
 
